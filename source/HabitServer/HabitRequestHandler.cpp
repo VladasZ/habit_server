@@ -1,6 +1,7 @@
 
 #include "Log.hpp"
 #include "LoginRequest.hpp"
+#include "HelloRequest.hpp"
 #include "NotFoundRequest.hpp"
 #include "RegistrationRequest.hpp"
 #include "HabitRequestHandler.hpp"
@@ -20,6 +21,7 @@ HTTPRequestHandler* HabitRequestHandler::createRequestHandler(const HTTPServerRe
 
     Log << uri;
 
+    ROUTE(HelloRequest);
     ROUTE(LoginRequest);
     ROUTE(RegistrationRequest);
 
