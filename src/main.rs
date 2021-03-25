@@ -1,28 +1,34 @@
-use warp::Filter;
+#![feature(proc_macro_hygiene, decl_macro)]
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
-struct Crediantals {
-    email: String,
-    password: String
+#[macro_use] extern crate rocket;
+
+use serde::Deserialize;
+
+use rocket::http::RawStr;
+use rocket_contrib::json::Json;
+
+
+#[derive(Debug, Deserialize)]
+struct LoginData {
+    pub email: String,
+    pub password: String
 }
 
+#[post("/login", data = "<task>")]
+fn login(task: Json<LoginData>) -> String {
+    format!("{:?}", task)
+}
 
+#[get("/users/<id>")]
+pub fn users(id: u8) -> String {
+    format!("Hello, {}!", id)
+}
 
-#[tokio::main]
-async fn main() {
+#[get("/hello")]
+pub fn hello() -> &'static str {
+    "Hello, outside world!"
+}
 
-    println!("start");
-
-    // GET /hello/warp => 200 OK with body "Hello, warp!"
-    let hello = warp::path!("hello")
-        .map(|| format!("Hello, tigidig!"));
-
-    let login = warp::path!("login")
-        .map(|| format!("Hello, tigidig! Login or kok!"));
-
-    let routes = hello.or(login);
-
-    warp::serve(routes)
-        .run(([127, 0, 0, 1], 80))
-        .await;
+fn main() {
+    rocket::ignite().mount("/", routes![hello, users, login]).launch();
 }
