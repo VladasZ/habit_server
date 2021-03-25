@@ -2,21 +2,23 @@
 
 #[macro_use] extern crate rocket;
 
-use serde::Deserialize;
+use serde::{ Serialize, Deserialize };
 
-use rocket::http::RawStr;
 use rocket_contrib::json::Json;
 
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 struct LoginData {
     pub email: String,
     pub password: String
 }
 
 #[post("/login", data = "<task>")]
-fn login(task: Json<LoginData>) -> String {
-    format!("{:?}", task)
+fn login(mut task: Json<LoginData>) -> Json<LoginData> {
+    println!("{:?}", task);
+    task.email = "kok".to_string();
+    task.password = "sos".to_string();
+    task
 }
 
 #[get("/users/<id>")]
@@ -30,5 +32,13 @@ pub fn hello() -> &'static str {
 }
 
 fn main() {
-    rocket::ignite().mount("/", routes![hello, users, login]).launch();
+
+    let cfg = rocket::config::Config::build(rocket::config::Environment::Development)
+        .address("127.0.0.1")
+        .port(80)
+        .unwrap();
+
+    rocket::custom(cfg)
+        .mount("/", routes![hello, users, login])
+        .launch();
 }
