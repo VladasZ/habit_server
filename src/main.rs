@@ -8,8 +8,8 @@ use serde::{ Serialize, Deserialize };
 use rocket_contrib::json::Json;
 use rocket_contrib::databases::diesel;
 
-#[database("sqlite_logs")]
-struct Db(diesel::SqliteConnection);
+// #[database("sqlite_logs")]
+// struct Db(diesel::SqliteConnection);
 
 #[derive(Debug, Serialize, Deserialize)]
 struct LoginData {
@@ -25,12 +25,12 @@ fn login(mut data: Json<LoginData>) -> Json<LoginData> {
     data
 }
 
-#[post("/login", data = "<data>")]
-fn register(db: Db, data: Json<LoginData>) -> Json<LoginData> {
-    //db.in
-
-    data
-}
+// #[post("/login", data = "<data>")]
+// fn register(db: Db, data: Json<LoginData>) -> Json<LoginData> {
+//     //db.in
+//
+//     data
+// }
 
 #[get("/users/<id>")]
 pub fn users(id: u8) -> String {
@@ -50,7 +50,7 @@ fn main() {
         .unwrap();
 
     rocket::custom(cfg)
-        .attach(Db::fairing())
+    //    .attach(Db::fairing())
         .mount("/", routes![hello, users, login])
         .launch();
 }

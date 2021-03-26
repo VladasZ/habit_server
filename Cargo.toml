@@ -20,3 +20,7 @@ features = ["diesel_sqlite_pool", "json"]
 
 [global.databases]
 sqlite_logs = { url = "/home/vladas/dev/database.sqlite" }
+
+[dependencies.rusqlite]
+version = "0.24.2"
+features = ["bundled"]
