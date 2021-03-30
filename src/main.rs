@@ -6,6 +6,7 @@
 use serde::{ Serialize, Deserialize };
 
 use rocket_contrib::json::Json;
+use std::convert::TryFrom;
 use rocket_contrib::databases::diesel;
 
 // #[database("sqlite_logs")]
@@ -15,6 +16,13 @@ use rocket_contrib::databases::diesel;
 struct LoginData {
     pub email: String,
     pub password: String
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct User {
+    pub name: String,
+    pub age: u8,
+    pub email: String
 }
 
 #[post("/login", data = "<data>")]
@@ -32,9 +40,14 @@ fn login(mut data: Json<LoginData>) -> Json<LoginData> {
 //     data
 // }
 
-#[get("/users/<id>")]
-pub fn users(id: u8) -> String {
-    format!("Hello, {}!", id)
+#[get("/user")]
+pub fn user() -> Json<User> {
+    let mut user = User {
+        name: "Kotitka".to_string(),
+        age: 23,
+        email: "kotitka@gmail.com".to_string()
+    };
+    Json(user)
 }
 
 #[get("/hello")]
@@ -45,12 +58,12 @@ pub fn hello() -> &'static str {
 fn main() {
 
     let cfg = rocket::config::Config::build(rocket::config::Environment::Development)
-        .address("127.0.0.1")
+        .address("192.168.100.8")
         .port(8000)
         .unwrap();
 
     rocket::custom(cfg)
     //    .attach(Db::fairing())
-        .mount("/", routes![hello, users, login])
+        .mount("/", routes![hello, user, login])
         .launch();
 }
