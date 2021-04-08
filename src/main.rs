@@ -19,7 +19,17 @@ struct LoginData {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+pub struct Animal {
+    pub mood: u32,
+    pub hunger: u32,
+    pub health: u32,
+
+    pub name: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct User {
+    pub animal: Animal,
     pub name: String,
     pub age: u8,
     pub email: String
@@ -43,6 +53,12 @@ fn login(mut data: Json<LoginData>) -> Json<LoginData> {
 #[get("/user")]
 pub fn user() -> Json<User> {
     let mut user = User {
+        animal: Animal {
+            mood: 80,
+            hunger: 30,
+            health: 95,
+            name: "Gragdans".to_string()
+        },
         name: "Kotitka".to_string(),
         age: 23,
         email: "kotitka@gmail.com".to_string()
@@ -58,8 +74,8 @@ pub fn hello() -> &'static str {
 fn main() {
 
     let cfg = rocket::config::Config::build(rocket::config::Environment::Development)
-        .address("192.168.100.8")
-        .port(8000)
+        .address("127.0.0.1")
+        .port(80)
         .unwrap();
 
     rocket::custom(cfg)
