@@ -59,6 +59,7 @@ pub fn user() -> Json<User> {
             health: 95,
             name: "Gragdans".to_string()
         },
+        
         name: "Kotitka".to_string(),
         age: 23,
         email: "kotitka@gmail.com".to_string()
@@ -74,7 +75,7 @@ pub fn hello() -> &'static str {
 fn main() {
 
     let cfg = rocket::config::Config::build(rocket::config::Environment::Development)
-        .address("127.0.0.1")
+        .address("0.0.0.0")
         .port(80)
         .unwrap();
 
