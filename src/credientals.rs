@@ -15,6 +15,6 @@ impl Sha3Hashable for String {
     fn sha3(self) -> String {
         let mut hasher = Sha3_256::new();
         hasher.update(self);
-        String::from_utf8(hasher.finalize().to_vec()).unwrap()
+        format!("{:x}", hasher.finalize())
     }
 }
