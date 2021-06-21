@@ -1,25 +1,17 @@
+mod credientals;
+mod user;
+
 #[macro_use]
 extern crate rocket;
-use rocket::serde::{json::Json, Deserialize, Serialize};
+use crate::credientals::Credentials;
+use crate::user::User;
+use rocket::serde::{json::Json, Serialize};
 use rocket::State;
 use std::sync::Mutex;
 
-#[derive(Debug, Deserialize)]
-struct Credentials {
-    login: String,
-    password: String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize)]
 struct Token {
     token: String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct User {
-    id: u32,
-    login: String,
-    password: String,
 }
 
 #[derive(Debug)]
@@ -35,17 +27,12 @@ fn users(users: &State<Users>) {
 #[post("/register", data = "<cred>")]
 fn register(users: &State<Users>, cred: Json<Credentials>) -> Json<Token> {
     let mut users = users.users.lock().unwrap();
+    let user = User::new(users.len(), cred.into_inner());
+    dbg!(&user);
+    users.push(user);
 
-    let len = users.len();
-
-    users.push(User {
-        id: len as u32,
-        login: cred.login.clone(),
-        password: cred.password.clone(),
-    });
-    dbg!(&cred);
     Json::from(Token {
-        token: "kok".to_string(),
+        token: "koken".to_string()
     })
 }
 
