@@ -5,8 +5,11 @@ mod user;
 extern crate rocket;
 use crate::credientals::Credentials;
 use crate::user::User;
+use rocket::config::Config;
 use rocket::serde::{json::Json, Serialize};
 use rocket::State;
+use std::net::IpAddr;
+use std::str::FromStr;
 use std::sync::Mutex;
 
 #[derive(Debug, Serialize)]
@@ -32,7 +35,7 @@ fn register(users: &State<Users>, cred: Json<Credentials>) -> Json<Token> {
     users.push(user);
 
     Json::from(Token {
-        token: "koken".to_string()
+        token: "koken".to_string(),
     })
 }
 
@@ -46,7 +49,12 @@ fn login(cred: Json<Credentials>) -> Json<Token> {
 
 #[launch]
 fn rocket() -> _ {
-    rocket::build()
+    let mut config = Config::debug_default();
+
+    config.address = IpAddr::from_str("0.0.0.0").unwrap();
+    config.port = 80;
+
+    rocket::custom(config)
         .mount("/", routes![login, users, register])
         .manage(Users {
             users: Mutex::new(vec![]),
