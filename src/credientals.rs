@@ -7,6 +7,12 @@ pub struct Credentials {
     pub password: String,
 }
 
+impl Credentials {
+    pub fn new(login: String, password: String) -> Credentials {
+        Credentials { login, password }
+    }
+}
+
 pub trait Sha3Hashable {
     fn sha3(self) -> String;
 }

@@ -22,9 +22,19 @@ struct Users {
     users: Mutex<Vec<User>>,
 }
 
-#[get("/users")]
-fn users(users: &State<Users>) {
-    dbg!(users);
+#[get("/user")]
+fn get_user(state: &State<Users>) -> Json<User> {
+    let users = state.users.lock().unwrap();
+    dbg!(&users);
+    Json(users.first().unwrap().clone())
+}
+
+#[patch("/user", data = "<user>")]
+fn patch_user(state: &State<Users>, user: Json<User>) -> Json<User> {
+    let mut users = state.users.lock().unwrap();
+    let mut local_user = users.first_mut().unwrap();
+    local_user.login = user.login.clone();
+    Json(local_user.clone())
 }
 
 #[post("/register", data = "<cred>")]
@@ -52,11 +62,14 @@ fn rocket() -> _ {
     let mut config = Config::debug_default();
 
     config.address = IpAddr::from_str("0.0.0.0").unwrap();
-    config.port = 80;
+    config.port = 8000;
 
     rocket::custom(config)
-        .mount("/", routes![login, users, register])
+        .mount("/", routes![login, get_user, patch_user, register])
         .manage(Users {
-            users: Mutex::new(vec![]),
+            users: Mutex::new(vec![User::new(
+                1,
+                Credentials::new("Kotitka".into(), "murmurmur".into()),
+            )]),
         })
 }
