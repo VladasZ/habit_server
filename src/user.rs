@@ -6,6 +6,10 @@ use rocket::serde::{Deserialize, Serialize};
 pub struct User {
     pub id: usize,
     pub login: String,
+    pub name: String,
+    pub age: u8,
+    pub email: String,
+    pub birthday: String,
     #[serde(skip)]
     pub password_hash: String,
 }
@@ -15,6 +19,10 @@ impl User {
         User {
             id,
             login: cred.login,
+            name: "".to_string(),
+            age: 0,
+            email: "".to_string(),
+            birthday: "".to_string(),
             password_hash: cred.password.sha3(),
         }
     }

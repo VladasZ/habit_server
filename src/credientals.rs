@@ -8,6 +8,7 @@ pub struct Credentials {
 }
 
 impl Credentials {
+    #[allow(dead_code)]
     pub fn new(login: String, password: String) -> Credentials {
         Credentials { login, password }
     }
