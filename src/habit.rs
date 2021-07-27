@@ -19,6 +19,7 @@ pub struct Habit {
     pub name: String,
     pub color: Color,
     pub daily_repetitions: u32,
+    pub daily_repetitions_done: u32,
     pub r#type: String,
     pub interval: Interval,
 }

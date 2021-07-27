@@ -95,7 +95,8 @@ fn make_habits() -> Habits {
                     g: 15,
                     b: 15,
                 },
-                daily_repetitions: 10000,
+                daily_repetitions: 4,
+                daily_repetitions_done: 1,
                 r#type: "good".to_string(),
                 interval: Interval {
                     begin: "a".into(),
@@ -110,7 +111,8 @@ fn make_habits() -> Habits {
                     g: 15,
                     b: 15,
                 },
-                daily_repetitions: 10000,
+                daily_repetitions: 2,
+                daily_repetitions_done: 2,
                 r#type: "good".to_string(),
                 interval: Interval {
                     begin: "a".into(),
@@ -125,7 +127,8 @@ fn make_habits() -> Habits {
                     g: 15,
                     b: 15,
                 },
-                daily_repetitions: 0,
+                daily_repetitions: 5,
+                daily_repetitions_done: 2,
                 r#type: "bad".to_string(),
                 interval: Interval {
                     begin: "a".into(),
