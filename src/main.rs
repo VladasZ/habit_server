@@ -4,10 +4,11 @@ mod user;
 
 #[macro_use]
 extern crate rocket;
-use crate::credientals::Credentials;
+use crate::credientals::{Credentials, Sha3Hashable};
 use crate::habit::{Color, Habit, Interval};
 use crate::user::User;
 use rocket::config::Config;
+use rocket::response::status::NotFound;
 use rocket::serde::{json::Json, Serialize};
 use rocket::State;
 use std::net::IpAddr;
@@ -19,19 +20,14 @@ struct Token {
     token: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 struct Users {
     users: Mutex<Vec<User>>,
 }
 
-#[derive(Debug)]
-struct Habits {
-    habits: Mutex<Vec<Habit>>,
-}
-
 #[get("/habits")]
-fn get_habits(state: &State<Habits>) -> Json<Vec<Habit>> {
-    let habits = state.habits.lock().unwrap();
+fn get_habits() -> Json<Vec<Habit>> {
+    let habits = vec![];
     Json(habits.to_vec())
 }
 
@@ -63,80 +59,21 @@ fn register(users: &State<Users>, cred: Json<Credentials>) -> Json<Token> {
 }
 
 #[post("/login", data = "<cred>")]
-fn login(cred: Json<Credentials>) -> Json<Token> {
+fn login(users: &State<Users>, cred: Json<Credentials>) -> Result<Json<Token>, NotFound<&'static str>> {
+
     dbg!(&cred);
-    Json::from(Token {
-        token: "kok".to_string(),
-    })
-}
 
-fn make_users() -> Users {
-    Users {
-        users: Mutex::new(vec![User {
-            id: 0,
-            login: "kotitka".to_string(),
-            name: "Kisulenka!".to_string(),
-            age: 23,
-            email: "kotitka@gmail.com".to_string(),
-            birthday: "26.11.1997".to_string(),
-            password_hash: "a".to_string(),
-        }]),
+    let users = users.users.lock().unwrap();
+    if let Some(user) = users.iter().find(|a| a.login == cred.login) {
+        if user.password_hash == cred.password.sha3() {
+            return Ok(Json::from(Token {
+                token: "koken".to_string(),
+            }));
+        }
+        return Err(NotFound("Invalid password"))
     }
-}
 
-fn make_habits() -> Habits {
-    Habits {
-        habits: Mutex::new(vec![
-            Habit {
-                time: "00:00".to_string(),
-                name: "makbuk".to_string(),
-                color: Color {
-                    r: 15,
-                    g: 15,
-                    b: 15,
-                },
-                daily_repetitions: 4,
-                daily_repetitions_done: 1,
-                r#type: "good".to_string(),
-                interval: Interval {
-                    begin: "a".into(),
-                    end: "b".into(),
-                },
-            },
-            Habit {
-                time: "00:15".to_string(),
-                name: "iphone".to_string(),
-                color: Color {
-                    r: 15,
-                    g: 15,
-                    b: 15,
-                },
-                daily_repetitions: 2,
-                daily_repetitions_done: 2,
-                r#type: "good".to_string(),
-                interval: Interval {
-                    begin: "a".into(),
-                    end: "b".into(),
-                },
-            },
-            Habit {
-                time: "00:30".to_string(),
-                name: "xiaouuumiii".to_string(),
-                color: Color {
-                    r: 15,
-                    g: 15,
-                    b: 15,
-                },
-                daily_repetitions: 5,
-                daily_repetitions_done: 2,
-                r#type: "bad".to_string(),
-                interval: Interval {
-                    begin: "a".into(),
-                    end: "b".into(),
-                },
-            },
-        ]),
-    }
+    Err(NotFound("User not found"))
 }
 
 #[launch]
@@ -151,6 +88,5 @@ fn rocket() -> _ {
             "/",
             routes![login, get_user, patch_user, register, get_habits],
         )
-        .manage(make_users())
-        .manage(make_habits())
+        .manage(Users::default())
 }

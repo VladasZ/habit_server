@@ -2,7 +2,7 @@ use crate::credientals::Sha3Hashable;
 use crate::Credentials;
 use rocket::serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct User {
     pub id: usize,
     pub login: String,
