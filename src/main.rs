@@ -59,18 +59,16 @@ fn register(users: &State<Users>, cred: Json<Credentials>) -> Json<Token> {
 }
 
 #[post("/login", data = "<cred>")]
-fn login(users: &State<Users>, cred: Json<Credentials>) -> Result<Json<Token>, NotFound<&'static str>> {
+fn login(users: &State<Users>, cred: Json<Credentials>) -> Result<Json<User>, NotFound<&'static str>> {
 
     dbg!(&cred);
 
     let users = users.users.lock().unwrap();
     if let Some(user) = users.iter().find(|a| a.login == cred.login) {
-        if user.password_hash == cred.password.sha3() {
-            return Ok(Json::from(Token {
-                token: "koken".to_string(),
-            }));
-        }
-        return Err(NotFound("Invalid password"))
+      //  if user.password_hash == cred.password.sha3() {
+            return Ok(Json(user.clone()));
+      //  }
+       // return Err(NotFound("Invalid password"))
     }
 
     Err(NotFound("User not found"))
