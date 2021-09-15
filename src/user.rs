@@ -5,7 +5,6 @@ use rocket::serde::{Deserialize, Serialize};
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct User {
     pub id: usize,
-    pub login: String,
     pub name: String,
     pub age: u8,
     pub email: String,
@@ -18,11 +17,10 @@ impl User {
     pub fn new(id: usize, cred: Credentials) -> User {
         User {
             id,
-            login: cred.login,
-            name: "".to_string(),
-            age: 0,
-            email: "".to_string(),
-            birthday: "".to_string(),
+            name: "Denis".to_string(),
+            age: 30,
+            email: cred.email,
+            birthday: "05:05:2005".to_string(),
             password_hash: cred.password.sha3(),
         }
     }

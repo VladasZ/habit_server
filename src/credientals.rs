@@ -3,14 +3,14 @@ use sha3::{Digest, Sha3_256};
 
 #[derive(Debug, Deserialize)]
 pub struct Credentials {
-    pub login: String,
+    pub email: String,
     pub password: String,
 }
 
 impl Credentials {
     #[allow(dead_code)]
-    pub fn new(login: String, password: String) -> Credentials {
-        Credentials { login, password }
+    pub fn new(email: String, password: String) -> Credentials {
+        Credentials { email, password }
     }
 }
 

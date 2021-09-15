@@ -42,7 +42,7 @@ fn get_user(state: &State<Users>) -> Json<User> {
 fn patch_user(state: &State<Users>, user: Json<User>) -> Json<User> {
     let mut users = state.users.lock().unwrap();
     let mut local_user = users.first_mut().unwrap();
-    local_user.login = user.login.clone();
+    local_user.email = user.email.clone();
     Json(local_user.clone())
 }
 
@@ -64,7 +64,7 @@ fn login(users: &State<Users>, cred: Json<Credentials>) -> Result<Json<User>, No
     dbg!(&cred);
 
     let users = users.users.lock().unwrap();
-    if let Some(user) = users.iter().find(|a| a.login == cred.login) {
+    if let Some(user) = users.iter().find(|a| a.email == cred.email) {
       //  if user.password_hash == cred.password.sha3() {
             return Ok(Json(user.clone()));
       //  }
