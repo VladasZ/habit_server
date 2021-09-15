@@ -65,10 +65,10 @@ fn login(users: &State<Users>, cred: Json<Credentials>) -> Result<Json<User>, No
 
     let users = users.users.lock().unwrap();
     if let Some(user) = users.iter().find(|a| a.email == cred.email) {
-      //  if user.password_hash == cred.password.sha3() {
+       if user.password_hash == cred.password.sha3() {
             return Ok(Json(user.clone()));
-      //  }
-       // return Err(NotFound("Invalid password"))
+       }
+       return Err(NotFound("Invalid password"))
     }
 
     Err(NotFound("User not found"))
